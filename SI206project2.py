@@ -29,7 +29,7 @@ from bs4 import BeautifulSoup
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
 def find_urls(s):
-        return re.findall(r'(https?://[^\s]+\.\S\S*)', s)
+        return re.findall(r'(https?://[^\s]+\.\S\S*)', s) #using re to match https and filter out other text that isn't in url format
 
 
 ## PART 2  - Define a function grab_headlines.
@@ -39,12 +39,12 @@ def find_urls(s):
 
 def grab_headlines():
     response = urlopen("http://www.michigandaily.com/section/opinion")
-    soup = BeautifulSoup(response, 'html.parser')
+    soup = BeautifulSoup(response, 'html.parser') #creating the soup for the url to iterate through and find the links
 
-    headlines = soup.find('div', attrs={'class': 'view-most-read'})
+    headlines = soup.find('div', attrs={'class': 'view-most-read'}) #navigating section within the url where the links are found
     titles = []
-    for list_item in headlines.find_all('li'):
-        titles.append(list_item.find('a').contents[0])
+    for list_item in headlines.find_all('li'): #iterating the section to find only the links
+        titles.append(list_item.find('a').contents[0]) # appending the titles to a new list
     return titles
 
 
@@ -61,31 +61,31 @@ def grab_headlines():
 
 def get_umsi_data():
     umsi_titles = {}
-    for idx in range(0,13):
+    for idx in range(0,13): #setting page range
         link = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastna_me_value=&rid=All"
 
         if idx == 0:
             link = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastna_me_value=&rid=All"
         else:
-            link += "&page=" + str(idx)
+            link += "&page=" + str(idx) #adding pages up to 12
         req = Request(link)
-        req.add_header('User-Agent', 'SI_CLASS')
+        req.add_header('User-Agent', 'SI_CLASS') #req to site
 
         response = urlopen(req)
 
         content = response.read()
 
-        soup = BeautifulSoup(content, 'html.parser')
-        main_div = soup.find('div', attrs={'class': 'view-content'})
+        soup = BeautifulSoup(content, 'html.parser') #creating soup
+        main_div = soup.find('div', attrs={'class': 'view-content'}) #going into main content
 
-        name_val = main_div.find_all('div', attrs={'property': 'dc:title'})
-        title_val = main_div.find_all('div', attrs={'class': 'field-name-field-person-titles'})
+        name_val = main_div.find_all('div', attrs={'property': 'dc:title'}) #grabbing the names
+        title_val = main_div.find_all('div', attrs={'class': 'field-name-field-person-titles'}) #grabbing titles
 
 
-        for indexer in range(0, len(name_val)):
+        for indexer in range(0, len(name_val)): #itterating through names and titles within html snippet
             name = name_val[indexer].find('h2').contents[0]
             title = title_val[indexer].find('div').find('div').contents[0]
-            umsi_titles[name] = title
+            umsi_titles[name] = title #setting key value pair for dict
 
     return umsi_titles
 
@@ -95,7 +95,7 @@ def get_umsi_data():
 
 def num_students(data):
     phd_counter = 0
-    for student in data:
+    for student in data: #iterating through the data and if the value pair is equal to "PhD" then add one
         if data[student] == "PhD student":
             phd_counter += 1
     print (phd_counter)
